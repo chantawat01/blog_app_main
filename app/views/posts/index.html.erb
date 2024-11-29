@@ -1,0 +1,32 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Posts" %>
+
+<h1>Posts</h1>
+
+<!-- ฟอร์มสำหรับการค้นหา -->
+<%= form_with url: posts_path, method: :get, local: true do %>
+  <div class="form-group">
+    <%= label_tag :query, "Search Posts" %>
+    <%= text_field_tag :query, params[:query], class: "form-control", placeholder: "Enter keyword..." %>
+  </div>
+  <%= submit_tag "Search", class: "btn btn-primary" %>
+<% end %>
+
+<hr>
+
+<!-- แสดงผลโพสต์ -->
+<div id="posts">
+  <% if @posts.any? %>
+    <% @posts.each do |post| %>
+      <%= render post %>
+      <p>
+        <%= link_to "Show this post", post %>
+      </p>
+    <% end %>
+  <% else %>
+    <p>No posts found.</p>
+  <% end %>
+</div>
+
+<%= link_to "New post", new_post_path %>

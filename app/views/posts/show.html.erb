@@ -1,0 +1,47 @@
+<h1><%= @post.title %></h1>
+<p><%= @post.content %></p>
+
+<!-- แสดงคอมเมนต์ทั้งหมด -->
+<h3>Comments</h3>
+<% @post.comments.each do |comment| %>
+  <div class="comment">
+    <% if comment.user.present? %>
+      <p><strong><%= comment.user.name %></strong>: <%= comment.body %></p>
+    <% else %>
+      <p><strong>Anonymous</strong>: <%= comment.body %></p>
+    <% end %>
+    <p><em><%= time_ago_in_words(comment.created_at) %> ago</em></p>
+  </div>
+<% end %>
+
+<!-- ฟอร์มสำหรับการคอมเมนต์ใหม่ -->
+<% if user_signed_in? %>
+  <h3>Leave a Comment:</h3>
+  <%= form_with(model: [@post, @post.comments.build], local: true) do |form| %>
+    <div class="form-group">
+      <%= form.text_area :body, class: "form-control", rows: 3 %>
+    </div>
+    <%= form.submit "Post Comment", class: "btn btn-primary" %>
+  <% end %>
+<% end %>
+
+<!-- ปุ่ม Like/Unlike -->
+<p>
+  <% if current_user.voted_for? @post %>
+    <!-- ถ้าผู้ใช้กดไลค์แล้ว แสดงปุ่ม Unlike -->
+    <%= button_to "Unlike", unlike_post_path(@post), method: :post, class: "btn btn-danger" %>
+  <% else %>
+    <!-- ถ้าผู้ใช้ยังไม่ได้กดไลค์ แสดงปุ่ม Like -->
+    <%= button_to "Like", like_post_path(@post), method: :post, class: "btn btn-primary" %>
+  <% end %>
+  (<%= @post.get_likes.size %>) <!-- แสดงจำนวนไลค์ -->
+</p>
+
+<p style="color: green"><%= notice %></p>
+
+<div>
+  <%= link_to "Edit this post", edit_post_path(@post) %> |
+  <%= link_to "Back to posts", posts_path %>
+  
+  <%= button_to "Destroy this post", @post, method: :delete %>
+</div>
