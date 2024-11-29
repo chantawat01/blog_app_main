@@ -27,14 +27,18 @@
 
 <!-- ปุ่ม Like/Unlike -->
 <p>
-  <% if current_user.voted_for? @post %>
-    <!-- ถ้าผู้ใช้กดไลค์แล้ว แสดงปุ่ม Unlike -->
-    <%= button_to "Unlike", unlike_post_path(@post), method: :post, class: "btn btn-danger" %>
+  <% if user_signed_in? %> <!-- ตรวจสอบว่าผู้ใช้ล็อกอินอยู่หรือไม่ -->
+    <% if current_user.voted_for?(@post) %>
+      <!-- ถ้าผู้ใช้กดไลค์แล้ว แสดงปุ่ม Unlike -->
+      <%= button_to "Unlike", like_post_path(@post), method: :post, class: "btn btn-danger" %>
+    <% else %>
+      <!-- ถ้าผู้ใช้ยังไม่ได้กดไลค์ แสดงปุ่ม Like -->
+      <%= button_to "Like", like_post_path(@post), method: :post, class: "btn btn-primary" %>
+    <% end %>
+    (<%= @post.get_likes.size %>) <!-- แสดงจำนวนไลค์ -->
   <% else %>
-    <!-- ถ้าผู้ใช้ยังไม่ได้กดไลค์ แสดงปุ่ม Like -->
-    <%= button_to "Like", like_post_path(@post), method: :post, class: "btn btn-primary" %>
+    <p>You need to <%= link_to "log in", new_user_session_path %> to like this post.</p>
   <% end %>
-  (<%= @post.get_likes.size %>) <!-- แสดงจำนวนไลค์ -->
 </p>
 
 <p style="color: green"><%= notice %></p>

@@ -67,11 +67,15 @@ class PostsController < ApplicationController
     end
   end
 
-  # เพิ่ม action like ที่จะเพิ่มจำนวน likes ให้โพสต์
+  # ปรับปรุง action like ให้รองรับ Unlike
   def like
-    @post.liked_by current_user  # ใช้ฟังก์ชันจาก acts_as_votable ที่จะเพิ่มไลค์ให้โพสต์
-
-    redirect_to @post, notice: 'You liked this post!'  # เมื่อกดไลค์เสร็จแล้ว เปลี่ยนเส้นทางกลับไปที่หน้าโพสต์
+    if current_user.voted_up_on?(@post) # ตรวจสอบว่าผู้ใช้ได้กดไลค์แล้วหรือไม่
+      @post.unliked_by current_user   # หากกดแล้ว ให้ Unlike
+      redirect_to @post, notice: 'You unliked this post!'
+    else
+      @post.liked_by current_user     # หากยังไม่กดไลค์ ให้ Like
+      redirect_to @post, notice: 'You liked this post!'
+    end
   end
 
   private
